@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Не ебу что писать сюда</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            touch-action: manipulation;
+        }
+
+        /* Большое сердце */
+        .big-heart {
+            position: relative;
+            font-size: 35vw;
+            color: #ff2d75;
+            text-shadow: 
+                0 0 20px #ff2d75, 
+                0 0 40px #ff2d75, 
+                0 0 60px #ff2d75;
+            animation: heartbeat 1.5s ease infinite, glow 2s ease-in-out infinite alternate;
+            z-index: 10;
+            cursor: pointer;
+            transition: transform 0.3s;
+            user-select: none;
+        }
+
+        .big-heart:active {
+            transform: scale(1.2) !important;
+        }
+
+        .big-heart:hover {
+            transform: scale(1.1);
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.9; }
+            100% { opacity: 1; }
+        }
+
+        /* Падающие сердечки */
+        .falling-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2.5rem;
+            color: rgba(255, 105, 180, 0.8);
+            animation: falling linear infinite;
+            filter: drop-shadow(0 0 5px rgba(255, 20, 147, 0.7));
+            user-select: none;
+        }
+
+        @keyframes falling {
+            0% {
+                transform: translateY(-10vh) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(110vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Сообщение */
+        .message {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+            z-index: 20;
+            opacity: 0;
+            animation: fadeIn 3s forwards 1s;
+            max-width: 90%;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        .click-effect {
+            position: absolute;
+            font-size: 3rem;
+            color: #ff69b4;
+            animation: explode 1s ease-out forwards;
+            pointer-events: none;
+            z-index: 30;
+        }
+
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* Адаптация под мобильные */
+        @media (max-width: 768px) {
+            .big-heart {
+                font-size: 50vw;
+            }
+            .message {
+                font-size: 1.8rem;
+                bottom: 10%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="big-heart" id="bigHeart">❤</div>
+    <div class="falling-hearts" id="heartsContainer"></div>
+    <div class="message" id="message">Чтоб не ахуевала больно ❤️</div>
+    <audio id="heartSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
+
+    <script>
+        const heartSymbols = ['❤', '💖', '💘', '💝', '💗', '💓', '💞'];
+        const messages = [
+            "Чтоб не ахуевала больно ❤️",
+            "Пенёк?",
+            " Абсент?",
+            "Куда полезла",
+            "Выруби его нахуй",
+            "Пиздец",
+            "Хватит",
+            "Иди нахуй"
+        ];
+        function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            const isMobile = window.innerWidth < 768;
+            const heartCount = isMobile ? 15 : 30;
+
+            for (let i = 0; i < heartCount; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                    
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    
+                    const duration = Math.random() * 4 + 3;
+                    heart.style.animationDuration = `${duration}s`;
+                    heart.style.animationDelay = `${Math.random() * 5}s`;
+                    
+                    const size = Math.random() * 1.5 + 1.5;
+                    heart.style.fontSize = `${size}rem`;
+                    
+                    container.appendChild(heart);
+                }, i * 300);
+            }
+        }
+        const bigHeart = document.getElementById('bigHeart');
+        const heartSound = document.getElementById('heartSound');
+        const messageElement = document.getElementById('message');
+
+        bigHeart.addEventListener('click', (e) => {
+            const clickEffect = document.createElement('div');
+            clickEffect.classList.add('click-effect');
+            clickEffect.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+            clickEffect.style.left = `${e.clientX}px`;
+            clickEffect.style.top = `${e.clientY}px`;
+            document.body.appendChild(clickEffect);
+           
+            heartSound.currentTime = 0;
+            heartSound.play();
+
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            messageElement.textContent = randomMessage;
+            messageElement.style.animation = 'none';
+            setTimeout(() => {
+                messageElement.style.animation = 'fadeIn 1.5s forwards';
+            }, 10);
+
+            setTimeout(() => {
+                clickEffect.remove();
+            }, 1000);
+        });
+        createHearts();
+
+        setTimeout(() => {
+            messageElement.style.opacity = '1';
+        }, 1000);
+        window.addEventListener('resize', () => {
+            const heartsContainer = document.getElementById('heartsContainer');
+            heartsContainer.innerHTML = '';
+            createHearts();
+        });
+    </script>
+</body>
+</html>
